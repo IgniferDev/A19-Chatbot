@@ -1,0 +1,124 @@
+<!-- src/app/chat/components/settings-modal/settings-modal.component.html -->
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center"
+  (click)="onBackdropClick($event)"
+  role="dialog"
+  aria-modal="true"
+>
+  <!-- Fondo semitransparente -->
+  <div class="absolute inset-0 bg-black/40"></div>
+
+  <!-- Modal card: max height limitado, layout column flexible -->
+  <div
+    class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 p-0 z-10
+           flex flex-col min-h-0 max-h-[calc(100vh-4rem)]"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- HEADER (sticky) -->
+    <div class="sticky top-0 bg-white z-20 px-6 py-4 border-b flex items-start justify-between gap-4">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-800">Editar información</h3>
+        <p class="text-sm text-gray-500 mt-1">Actualiza tus datos personales y preferencias.</p>
+      </div>
+
+      <!-- Botón cerrar (siempre visible por ser sticky en header) -->
+      <button (click)="closeModal()" aria-label="Cerrar" class="text-gray-500 hover:text-gray-700 ml-auto">
+        ✕
+      </button>
+    </div>
+
+    <!-- BODY: scrollable -->
+    <div class="px-6 py-4 overflow-y-auto flex-1 min-h-0 space-y-4">
+      <!-- Foto y editar -->
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="flex flex-col items-center md:items-start">
+          <div class="relative">
+            <img [src]="profileImageUrl" alt="Foto de usuario" class="w-28 h-28 rounded-full object-cover shadow" />
+            <button
+              type="button"
+              class="absolute bottom-0 right-0 bg-white border rounded-full p-1 shadow hover:bg-gray-100"
+              (click)="triggerFileInput(fileInput)"
+              aria-label="Editar foto"
+              title="Editar foto">
+              ✎
+            </button>
+          </div>
+
+          <input #fileInput type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
+
+          <p class="mt-3 text-sm text-gray-600 text-center md:text-left">Haz clic en la foto para cambiarla.</p>
+        </div>
+
+        <!-- Campos: ocupan 2 columnas en md+ -->
+        <div class="md:col-span-2 space-y-3">
+          <div class="grid md:grid-cols-2 gap-3">
+            <!-- Nombres -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Nombre(s)</label>
+              <input type="text" [(ngModel)]="userName" class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+            </div>
+
+            <!-- Apellidos -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Apellido(s)</label>
+              <input type="text" [(ngModel)]="userLastName" class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+            </div>
+          </div>
+
+          <!-- Correo -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Correo</label>
+            <input type="email" [(ngModel)]="userEmail" class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+          </div>
+
+          <!-- Cambiar contraseña -->
+          <div class="mt-2">
+            <button type="button"
+                    class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-white hover:bg-gray-50"
+                    (click)="togglePasswordFields()">
+              🔒 Cambiar contraseña
+            </button>
+
+            <div *ngIf="showPasswordFields" class="mt-3 space-y-2">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Nueva contraseña</label>
+                <input type="password" [(ngModel)]="newPassword" class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Confirmar nueva contraseña</label>
+                <input type="password" [(ngModel)]="confirmNewPassword" class="mt-1 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de acciones importantes -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div class="flex gap-3">
+          <button type="button"
+                  class="px-3 py-2 rounded-lg bg-red-50 text-red-700 border border-red-100 hover:bg-red-100"
+                  (click)="confirmDeleteAccount()">
+            Eliminar cuenta
+          </button>
+
+          <button type="button"
+                  class="px-3 py-2 rounded-lg bg-yellow-50 text-yellow-800 border border-yellow-100 hover:bg-yellow-100"
+                  (click)="confirmClearHistory()">
+            Borrar historial
+          </button>
+        </div>
+
+        <p class="text-xs text-gray-500 max-w-xl">
+          Usted es el único dueño de su información. Tiene la libertad de eliminar su cuenta y datos, pero esta acción no se puede revertir.
+        </p>
+      </div>
+    </div>
+
+    <!-- FOOTER (sticky) -->
+    <div class="sticky bottom-0 z-20 bg-white border-t px-6 py-3 flex justify-end gap-3">
+      <button (click)="closeModal()" class="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">Cancelar</button>
+      <button (click)="save()" class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Guardar cambios</button>
+    </div>
+  </div>
+</div>

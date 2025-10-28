@@ -1,11 +1,18 @@
-import { Component } from '@angular/core';
+// src/app/chat/components/side-menu/side-menu.component.ts
+import { Component, EventEmitter, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-side-menu',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './side-menu.component.html',
-  styleUrls: ['./side-menu.component.css']
 })
 export class SideMenuComponent {
+  @Output() settingsOpen = new EventEmitter<void>();
+
+  userEmail = 'usuario@mail.com'; // <- aquí
+  userName = 'Usuario Genérico';
 
   chats = [
     { title: 'Conversación 4' },
@@ -13,12 +20,11 @@ export class SideMenuComponent {
     { title: 'Conversación 6' },
   ];
 
-  openSettings() {
-    // Aquí luego abriremos el modal de ajustes
-    console.log('Abrir modal de ajustes...');
+  onOpenSettings(): void {
+    this.settingsOpen.emit();
   }
 
-  logout(){
-
+  logout(): void {
+    console.log('Cerrar sesión (placeholder)');
   }
 }

@@ -1,40 +1,57 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+// src/app/chat/pages/chat-page/chat-page.component.ts
+import { Component, ElementRef, ViewChild, AfterViewChecked, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SideMenuComponent } from '../../components/side-menu/side-menu.component';
-
+import { SettingsModalComponent } from '../../components/settings-modal/settings-modal.component';
 
 @Component({
   selector: 'app-chat-page',
   standalone: true,
-  imports: [
-    CommonModule,   // para *ngIf, *ngFor, ngClass, etc.
-    FormsModule,    // para ngModel
-    SideMenuComponent, // porque usas <app-side-menu>
-  ],
+  imports: [CommonModule, FormsModule, SideMenuComponent, SettingsModalComponent],
   templateUrl: './chat-page.component.html',
 })
-export class ChatPageComponent implements AfterViewChecked {
+export class ChatPageComponent implements AfterViewChecked, OnInit {
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
+  // Visibilidad side-menu: por defecto en desktop true, en móvil false
+  showSideMenu = true;
+  isMobile = false;
+
+  showSettings = false;
   inputText = '';
   messages: { text: string; from: 'user' | 'bot' }[] = [
     { text: 'Hola, soy EmoBot. ¿En qué puedo ayudarte hoy?', from: 'bot' },
   ];
 
-  sendMessage(event: Event) {
+  ngOnInit(): void {
+    this.updateViewport();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.updateViewport();
+  }
+
+  private updateViewport(): void {
+    this.isMobile = window.innerWidth < 768; // md breakpoint
+    // en móvil por defecto ocultamos el side menu
+    this.showSideMenu = this.isMobile ? false : true;
+  }
+
+  toggleSideMenu(): void {
+    this.showSideMenu = !this.showSideMenu;
+  }
+
+  // chat logic (igual que ya tienes)
+  sendMessage(event: Event): void {
     event.preventDefault();
     if (!this.inputText.trim()) return;
 
-    // Mensaje del usuario
     this.messages.push({ text: this.inputText, from: 'user' });
-
     const userMessage = this.inputText;
     this.inputText = '';
 
-    // Simular respuesta del bot después de 500ms
     setTimeout(() => {
       const botReply = this.getBotReply(userMessage);
       this.messages.push({ text: botReply, from: 'bot' });
@@ -44,9 +61,7 @@ export class ChatPageComponent implements AfterViewChecked {
     this.scrollToBottom();
   }
 
-  // Respuesta simulada del bot
   getBotReply(userMsg: string): string {
-    // Respuestas de ejemplo
     if (userMsg.toLowerCase().includes('ansiedad')) {
       return 'Parece que mencionas ansiedad. Recuerda que puedes buscar ayuda profesional si lo necesitas.';
     } else if (userMsg.toLowerCase().includes('depresion') || userMsg.toLowerCase().includes('depresión')) {
@@ -56,7 +71,7 @@ export class ChatPageComponent implements AfterViewChecked {
     }
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     this.scrollToBottom();
   }
 

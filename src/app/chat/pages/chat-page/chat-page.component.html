@@ -1,39 +1,72 @@
+<!-- contenedor principal: altura exacta restando navbar (4rem) -->
 <div class="flex h-[calc(100vh-4rem)] mt-16 bg-gray-50">
-  <!-- Side Menu -->
-  <app-side-menu class="flex-shrink-0"></app-side-menu>
 
-  <!-- Chat area -->
-  <div class="flex-1 flex flex-col justify-between p-6">
-    <!-- Mensajes -->
-    <div class="flex-1 overflow-y-auto space-y-3 mb-4" #scrollContainer>
-      <div *ngFor="let msg of messages" class="flex" [ngClass]="msg.from === 'user' ? 'justify-end' : 'justify-start'">
-        <div
-          [ngClass]="
-            msg.from === 'user'
-              ? 'bg-indigo-600 text-white rounded-xl px-4 py-2 max-w-xs break-words'
-              : 'bg-white text-gray-800 rounded-xl px-4 py-2 max-w-xl shadow break-words'
-          ">
-          {{ msg.text }}
-        </div>
+  <!-- SideMenu: si showSideMenu true lo mostramos.
+       En móvil (isMobile) renderizamos como overlay fixed para que no empuje el chat. -->
+  <ng-container *ngIf="showSideMenu">
+    <!-- overlay mobile; panel cubre desde debajo del navbar (top-16) hasta bottom-0 -->
+    <div *ngIf="isMobile" class="fixed inset-0 z-40">
+      <!-- backdrop -->
+      <div class="absolute inset-0 bg-black/40" (click)="toggleSideMenu()"></div>
+
+      <!-- panel lateral: top-16 bottom-0 asegura cobertura vertical correcta -->
+      <div class="absolute left-0 top-16 bottom-0 w-72 bg-white shadow z-50">
+        <!-- side-menu ocupa toda la altura del panel padre -->
+        <app-side-menu class="h-full" (settingsOpen)="showSettings = true"></app-side-menu>
       </div>
     </div>
 
-    <!-- Barra de escritura -->
-    <form class="flex space-x-2" (submit)="sendMessage($event)">
-      <input
-        type="text"
-        [(ngModel)]="inputText"
-        name="chatInput"
-        class="flex-1 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500"
-        placeholder="Escribe un mensaje..."
-        required
-      />
-      <button
-        type="submit"
-        class="bg-indigo-600 text-white px-4 py-2 rounded-xl font-semibold hover:bg-indigo-700 transition"
-      >
-        Enviar
-      </button>
-    </form>
+    <!-- desktop inline: el contenedor padre controla la altura y el side-menu usa h-full -->
+    <div *ngIf="!isMobile" class="flex-shrink-0 h-[calc(100vh-4rem)]">
+      <app-side-menu class="h-full" (settingsOpen)="showSettings = true"></app-side-menu>
+    </div>
+  </ng-container>
+
+  <!-- Área principal del chat (centrada) -->
+  <div class="flex-1 flex flex-col p-4">
+    <!-- top bar del chat con botón para mostrar/ocultar side menu -->
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <!-- Botón para togglear side menu (visible siempre) -->
+        <button (click)="toggleSideMenu()"
+                class="p-2 rounded-md bg-white shadow-sm hover:bg-gray-100 border"
+                aria-label="Mostrar/ocultar menú">
+          <!-- icono simple -->
+          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+
+        <h2 class="text-lg font-semibold">EmoBot — Conversación</h2>
+      </div>
+    </div>
+
+    <!-- Contenedor centrado del chat (para que no ocupe toda la pantalla) -->
+    <div class="flex-1 flex flex-col items-center">
+      <div class="w-full max-w-3xl flex-1 flex flex-col">
+        <!-- mensajes (scrollable solo esta area) -->
+        <div class="flex-1 overflow-y-auto mb-4 px-2" #scrollContainer>
+          <div class="space-y-3 max-w-full">
+            <div *ngFor="let msg of messages" class="flex" [ngClass]="msg.from === 'user' ? 'justify-end' : 'justify-start'">
+              <div
+                [ngClass]="msg.from === 'user' ? 'bg-indigo-600 text-white rounded-xl px-4 py-2 max-w-xs break-words' : 'bg-white text-gray-800 rounded-xl px-4 py-2 max-w-xl shadow break-words'">
+                {{ msg.text }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- barra de mensaje fija al bottom del contenedor -->
+        <form class="flex items-center gap-2" (submit)="sendMessage($event)">
+          <input type="text" [(ngModel)]="inputText" name="chatInput"
+                 class="flex-1 px-4 py-2 border rounded-2xl focus:ring-2 focus:ring-indigo-500"
+                 placeholder="Escribe un mensaje..." required />
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-2xl font-semibold">Enviar</button>
+        </form>
+      </div>
+    </div>
   </div>
+
+  <!-- Modal ajustes -->
+  <app-settings-modal *ngIf="showSettings" (close)="showSettings = false"></app-settings-modal>
 </div>

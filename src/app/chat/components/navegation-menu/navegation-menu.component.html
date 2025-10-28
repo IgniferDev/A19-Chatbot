@@ -2,26 +2,38 @@
   <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
     <!-- Logo / Nombre -->
     <div class="text-2xl font-bold text-blue-600 cursor-pointer">
-      <a href="#" >EmoBot</a>
+      <a routerLink="/" (click)="closeMobile()">EmoBot</a>
     </div>
 
-    <!-- Links de navegación -->
+    <!-- Links de navegación (desktop) -->
     <ul class="hidden md:flex space-x-6 text-gray-700 font-medium">
-      <li><a href="nosotros" class="hover:text-blue-600">Nosotros</a></li>
-      <li><a href="legal" class="hover:text-blue-600">Legal</a></li>
-      <li><a href="contactanos" class="hover:text-blue-600">Contáctanos</a></li>
-      <li><a href="chat" class="hover:text-blue-600">Chatea</a></li>
-      <li><a href="login" class="hover:text-blue-600">Inicio de sesión</a></li>
-      <li><a href="register" class="hover:text-blue-600">Registro de usuario</a></li>
+      <li><a routerLink="/nosotros" class="hover:text-blue-600">Nosotros</a></li>
+      <li><a routerLink="/legal" class="hover:text-blue-600">Legal</a></li>
+      <li><a routerLink="/contactanos" class="hover:text-blue-600">Contáctanos</a></li>
+      <li><a routerLink="/chat" class="hover:text-blue-600">Chatea</a></li>
+      <li><a routerLink="/login" class="hover:text-blue-600">Inicio de sesión</a></li>
+      <li><a routerLink="/register" class="hover:text-blue-600">Registro</a></li>
     </ul>
 
     <!-- Botón menú (para móviles) -->
-    <button class="md:hidden text-gray-700 focus:outline-none">
+    <button class="md:hidden text-gray-700 focus:outline-none" (click)="toggleMobile()" aria-label="Abrir menú">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
            viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M4 6h16M4 12h16m-7 6h7"/>
       </svg>
     </button>
+  </div>
+
+  <!-- Mobile dropdown -->
+  <div *ngIf="mobileOpen" class="md:hidden bg-white border-t shadow">
+    <div class="max-w-7xl mx-auto px-6 py-4 space-y-3">
+      <a (click)="closeMobile()" routerLink="/nosotros" class="block text-gray-700 font-medium">Nosotros</a>
+      <a (click)="closeMobile()" routerLink="/legal" class="block text-gray-700 font-medium">Legal</a>
+      <a (click)="closeMobile()" routerLink="/contactanos" class="block text-gray-700 font-medium">Contáctanos</a>
+      <a (click)="closeMobile()" routerLink="/chat" class="block text-gray-700 font-medium">Chatea</a>
+      <a (click)="closeMobile()" routerLink="/login" class="block text-gray-700 font-medium">Inicio de sesión</a>
+      <a (click)="closeMobile()" routerLink="/register" class="block text-gray-700 font-medium">Registro</a>
+    </div>
   </div>
 </nav>
