@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-settings-modal',
@@ -32,7 +33,7 @@ export class SettingsModalComponent {
   loading = false;
   error = '';
 
-  constructor(private api: ApiService, private router: Router) {
+  constructor(private api: ApiService, private router: Router, private auth: AuthService) {
     // intenta cargar perfil al abrir (si el modal se crea en cada apertura)
     this.loadProfile();
   }
@@ -137,18 +138,23 @@ export class SettingsModalComponent {
   }
 
   confirmDeleteAccount(): void {
-    const ok = confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede revertir.');
-    if (!ok) return;
-    this.api.deleteAccount().subscribe({
-      next: () => {
-        this.api.logoutLocal();
-        alert('Cuenta eliminada.');
-        this.closeModal();
-        this.router.navigate(['/']);
-      },
-      error: (err) => alert(err?.error || 'Error al eliminar cuenta')
-    });
-  }
+  const ok = confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede revertir.');
+  if (!ok) return;
+
+  this.api.deleteAccount().subscribe({
+    next: () => {
+      this.api.logoutLocal();        // limpiar tokens
+      this.auth.logout();           // limpiar estado
+      alert('Cuenta eliminada.');
+      this.closeModal();
+      this.router.navigate(['/']);
+    },
+    error: (err) => {
+      alert(err?.error || 'Error al eliminar cuenta');
+    }
+  });
+}
+
 
   confirmClearHistory(): void {
     if (!confirm('¿Deseas eliminar todo tu historial?')) return;

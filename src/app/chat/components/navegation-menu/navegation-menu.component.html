@@ -1,12 +1,11 @@
 <nav class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
   <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
     <div class="flex items-center gap-4">
-      
-      <div *ngIf="(user$ | async) as user" class="hidden sm:block text-sm text-black-100">
-        Bienvenido {{ user.first_name || user.username }} a
-      </div>
       <div class="text-2xl font-bold text-blue-600 cursor-pointer">
         <a routerLink="/" (click)="closeMobile()">EmoBot</a>
+      </div>
+      <div *ngIf="(user$ | async) as user" class="hidden sm:block text-sm text-gray-700">
+        Bienvenido {{ user.first_name || user.username }}
       </div>
     </div>
 
@@ -14,14 +13,16 @@
       <li><a routerLink="/nosotros" class="hover:text-blue-600">Nosotros</a></li>
       <li><a routerLink="/legal" class="hover:text-blue-600">Legal</a></li>
       <li><a routerLink="/contactanos" class="hover:text-blue-600">Contáctanos</a></li>
-      <li><a routerLink="/chat" class="hover:text-blue-600">Chatea</a></li>
+
+      <!-- SOLO mostrar "Chatea" si el usuario está autenticado -->
+      <li *ngIf="(user$ | async)"><a routerLink="/chat" class="hover:text-blue-600">Chatea</a></li>
 
       <li *ngIf="!(user$ | async)"><a routerLink="/login" class="hover:text-blue-600">Inicio de sesión</a></li>
       <li *ngIf="!(user$ | async)"><a routerLink="/register" class="hover:text-blue-600">Registro de usuario</a></li>
 
       <li *ngIf="(user$ | async)" class="flex items-center space-x-3">
-        
-        <button (click)="logout()" class=" text-gray-600 hover:text-red-600">Cerrar sesión</button>
+        <span class="text-sm text-gray-600 hidden md:inline">{{ (user$ | async)?.email }}</span>
+        <button (click)="logout()" class="text-sm text-gray-600 hover:text-red-600">Cerrar sesión</button>
       </li>
     </ul>
 
@@ -34,24 +35,26 @@
     </button>
   </div>
 
+  <!-- Mobile dropdown -->
   <div *ngIf="mobileOpen" class="md:hidden bg-white border-t shadow">
     <div class="max-w-7xl mx-auto px-6 py-4 space-y-3">
       <a (click)="closeMobile()" routerLink="/nosotros" class="block text-gray-700 font-medium">Nosotros</a>
       <a (click)="closeMobile()" routerLink="/legal" class="block text-gray-700 font-medium">Legal</a>
       <a (click)="closeMobile()" routerLink="/contactanos" class="block text-gray-700 font-medium">Contáctanos</a>
-      <a (click)="closeMobile()" routerLink="/chat" class="block text-gray-700 font-medium">Chatea</a>
 
-      <ng-container *ngIf="!(user$ | async)">
-        <a (click)="closeMobile()" routerLink="/login" class="block text-gray-700 font-medium">Inicio de sesión</a>
-        <a (click)="closeMobile()" routerLink="/register" class="block text-gray-700 font-medium">Registro</a>
-      </ng-container>
+      <ng-container *ngIf="(user$ | async); else guestMobile">
+        <a (click)="closeMobile()" routerLink="/chat" class="block text-gray-700 font-medium">Chatea</a>
 
-      <ng-container *ngIf="(user$ | async) as user">
         <div class="pt-2 border-t">
-          
+          <p class="text-sm text-gray-700">Bienvenido {{ (user$ | async)?.first_name || (user$ | async)?.username }}</p>
           <button (click)="logout()" class="mt-2 w-full text-left text-sm text-red-600">Cerrar sesión</button>
         </div>
       </ng-container>
+
+      <ng-template #guestMobile>
+        <a (click)="closeMobile()" routerLink="/login" class="block text-gray-700 font-medium">Inicio de sesión</a>
+        <a (click)="closeMobile()" routerLink="/register" class="block text-gray-700 font-medium">Registro</a>
+      </ng-template>
     </div>
   </div>
 </nav>

@@ -10,9 +10,10 @@ import { NosotrosPageComponent } from './chat/pages/nosotros-page/nosotros-page.
 import { LegalPageComponent } from './chat/pages/legal-page/legal-page.component';
 import { ContactanosPageComponent } from './chat/pages/contactanos-page/contactanos-page.component';
 import { NavegationMenuComponent } from './chat/components/navegation-menu/navegation-menu.component';
+import { AuthGuard } from './chat/services/auth.guard';
 
 export const routes: Routes = [
-  { path: 'chat', component: ChatPageComponent },
+  { path: 'chat', component: ChatPageComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
   { path: 'home', component: HomePageComponent },

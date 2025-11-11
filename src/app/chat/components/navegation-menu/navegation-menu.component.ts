@@ -1,7 +1,7 @@
 // src/app/shared/navigation-menu/navigation-menu.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 
@@ -15,11 +15,17 @@ export class NavegationMenuComponent {
   mobileOpen = false;
   user$: Observable<any | null>;
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, private router: Router) {
     this.user$ = this.auth.currentUser$;
   }
 
   toggleMobile() { this.mobileOpen = !this.mobileOpen; }
   closeMobile() { this.mobileOpen = false; }
-  logout() { this.auth.logout(); }
+
+  logout() {
+    this.auth.logout();
+    // redirigir a página principal
+    this.router.navigate(['/']);
+    this.closeMobile();
+  }
 }
